@@ -1,5 +1,4 @@
 'use client';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import {
@@ -8,29 +7,26 @@ import {
   Path,
   SubmitHandler,
   useForm,
-  FormProvider,
 } from 'react-hook-form';
 import { z, ZodType } from 'zod';
 
-import ROUTES from '@/constants/routes';
-
-import { Button } from '../ui/button';
+import { Button } from '@/components/ui/button';
 import {
+  Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
-} from '../ui/form';
-import { Input } from '../ui/input';
-
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import ROUTES from '@/constants/routes';
 interface AuthFormProps<T extends FieldValues> {
-  formType: 'SIGN_IN' | 'SIGN_UP';
   schema: ZodType<T>;
   defaultValues: T;
   onSubmit: (data: T) => Promise<{ success: boolean }>;
+  formType: 'SIGN_IN' | 'SIGN_UP';
 }
-
 const AuthForm = <T extends FieldValues>({
   schema,
   defaultValues,
@@ -41,13 +37,12 @@ const AuthForm = <T extends FieldValues>({
     resolver: zodResolver(schema),
     defaultValues: defaultValues as DefaultValues<T>,
   });
-
-  const handleSubmit: SubmitHandler<T> = async () => {};
-
+  const handleSubmit: SubmitHandler<T> = async () => {
+    // TODO: Authenticate User
+  };
   const buttonText = formType === 'SIGN_IN' ? 'Sign In' : 'Sign Up';
-
   return (
-    <FormProvider {...form}>
+    <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
         className='mt-10 space-y-6'
@@ -59,7 +54,7 @@ const AuthForm = <T extends FieldValues>({
             name={field as Path<T>}
             render={({ field }) => (
               <FormItem className='flex w-full flex-col gap-2.5'>
-                <FormLabel className='paragraph-medium text-dark400_light700 '>
+                <FormLabel className='paragraph-medium text-dark400_light700'>
                   {field.name === 'email'
                     ? 'Email Address'
                     : field.name.charAt(0).toUpperCase() + field.name.slice(1)}
@@ -69,9 +64,7 @@ const AuthForm = <T extends FieldValues>({
                     required
                     type={field.name === 'password' ? 'password' : 'text'}
                     {...field}
-                    className='paragraph-regular background-light900_dark300 
-                    light-border-2 text-dark300_light700 no-focus min-h-12 
-                    rounded-1.5 border'
+                    className='paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 no-focus min-h-12 rounded-1.5 border'
                   />
                 </FormControl>
                 <FormMessage />
@@ -81,19 +74,14 @@ const AuthForm = <T extends FieldValues>({
         ))}
         <Button
           disabled={form.formState.isSubmitting}
-          className='
-            primary-gradient paragraph-medium min-h-12 w-full 
-            rounded-2 px-4 py-3 font-inter text-light-900
-          '
-          onClick={() => onSubmit}
+          className='primary-gradient paragraph-medium min-h-12 w-full rounded-2 px-4 py-3 font-inter !text-light-900'
         >
           {form.formState.isSubmitting
             ? buttonText === 'Sign In'
-              ? 'Signing in...'
-              : 'Signing up...'
+              ? 'Signin In...'
+              : 'Signing Up...'
             : buttonText}
         </Button>
-
         {formType === 'SIGN_IN' ? (
           <p>
             Don&apos;t have an account?{' '}
@@ -101,7 +89,7 @@ const AuthForm = <T extends FieldValues>({
               href={ROUTES.SIGN_UP}
               className='paragraph-semibold primary-text-gradient'
             >
-              Sign Up
+              Sign up
             </Link>
           </p>
         ) : (
@@ -111,13 +99,12 @@ const AuthForm = <T extends FieldValues>({
               href={ROUTES.SIGN_IN}
               className='paragraph-semibold primary-text-gradient'
             >
-              Sign In
+              Sign in
             </Link>
           </p>
         )}
       </form>
-    </FormProvider>
+    </Form>
   );
 };
-
 export default AuthForm;
